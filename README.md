@@ -26,9 +26,9 @@ This toolkit provides a TypeScript-first approach to interacting with Strapi 5's
 ## Installation
 
 ```bash
-npm install strapi-http-toolkit
+npm install @ibrahimbayer/strapi-http-toolkit
 # or
-yarn add strapi-http-toolkit
+yarn add @ibrahimbayer/strapi-http-toolkit
 ```
 
 ## Usage
@@ -39,14 +39,14 @@ To use this module effectively, you need to define interfaces for your Strapi da
 
 ```typescript
 // Define your Strapi entity interfaces
-interface Author {
+interface Author extends BaseStrapiModel {
   id: number;
   documentId: string;
   name: string;
   books?: Book[];
 }
 
-interface Book {
+interface Book extends BaseStrapiModel {
   id: number;
   documentId: string;
   title: string;
@@ -54,7 +54,7 @@ interface Book {
   categories?: Category[];
 }
 
-interface Category {
+interface Category extends BaseStrapiModel {
   id: number;
   documentId: string;
   name: string;
@@ -65,23 +65,24 @@ interface Category {
 ### 2. Basic API calls
 
 ```typescript
-import api from "strapi-http-toolkit";
+import { GenericService } from "@ibrahimbayer/strapi-http-toolkit";
 
 // Get a list of books
-const books = await api.findMany<Book>("/books");
+const api = new GenericService<Book>("test");
+const books = await api.findMany("/books");
 
 // Get a single book
-const book = await api.findOne<Book>("/books", "documentid");
+const book = await api.findOne("/books", "documentid");
 
 // Create a new book, check author & category instead of object reference we are able to send documentid
-const newBook = await api.create<Book>("/books", {
+const newBook = await api.create("/books", {
   title: "New Book Title",
   author: "documentid",
   category: "documentid",
 });
 
 // Update a book
-const updatedBook = await api.update<Book>("/books", "documentid", {
+const updatedBook = await api.update("/books", "documentid", {
   title: "Updated Book Title",
   author: "documentid",
   category: "documentid",
@@ -94,9 +95,9 @@ await api.deleteOne("/books", "documentid");
 ### 3. Using PopulateOptions for relationships
 
 ```typescript
-import { StrapiHttp, PopulateOptions } from "strapi-http-toolkit";
+import { GenericService, PopulateOptions } from "strapi-http-toolkit";
 
-const api = new StrapiHttp("https://your-strapi-api.com");
+const api = new GenericService<Book>("https://your-strapi-api.com");
 
 // Define populate options with type safety
 const bookPopulate: PopulateOptions<Book> = {
@@ -109,7 +110,7 @@ const bookPopulate: PopulateOptions<Book> = {
 };
 
 // Get books with related data
-const books = await api.get<Book[]>("/books", {
+const books = await api.get("/books", {
   relations: bookPopulate,
 });
 ```
@@ -117,12 +118,12 @@ const books = await api.get<Book[]>("/books", {
 ### 4. Using FilterOptions for queries
 
 ```typescript
-import { StrapiHttp, FilterOptions } from "strapi-http-toolkit";
+import { GenericService, FilterOptions } from "strapi-http-toolkit";
 
-const api = new StrapiHttp("https://your-strapi-api.com");
+const api = new GenericService<Book>("https://your-strapi-api.com");
 
 // Define filter options with type safety
-const bookFilters: FilterOptions<Book> = {
+const bookFilters: FilterOptions = {
   filters: {
     title: {
       $contains: "Adventure",
@@ -141,23 +142,7 @@ const bookFilters: FilterOptions<Book> = {
 };
 
 // Get filtered books
-const filteredBooks = await api.get<Book[]>("/books", bookFilters);
-```
-
-### 5. Building relationships
-
-```typescript
-import { StrapiHttp, relationBuilder } from "strapi-http-toolkit";
-
-// Create a new book and connect it to an existing author and categories
-const bookData = relationBuilder<Book>({
-  title: "My New Book",
-  author: { connect: [1] }, // Connect to author with ID 1
-  categories: { connect: [2, 3, 4] }, // Connect to multiple categories
-});
-
-const api = new StrapiHttp("https://your-strapi-api.com");
-const newBook = await api.post<Book>("/books", { data: bookData });
+const filteredBooks = await api.get("/books", bookFilters);
 ```
 
 ## Advanced Examples
