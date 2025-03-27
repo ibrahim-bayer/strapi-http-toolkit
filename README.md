@@ -67,29 +67,31 @@ interface Category extends BaseStrapiModel {
 ```typescript
 import { GenericService } from "@ibrahimbayer/strapi-http-toolkit";
 
+// Generate service class
+const api = new GenericService<Book>("/books");
+
 // Get a list of books
-const api = new GenericService<Book>("test");
-const books = await api.findMany("/books");
+const books = await api.findMany();
 
 // Get a single book
-const book = await api.findOne("/books", "documentid");
+const book = await api.findOne("documentid");
 
 // Create a new book, check author & category instead of object reference we are able to send documentid
-const newBook = await api.create("/books", {
+const newBook = await api.create({
   title: "New Book Title",
   author: "documentid",
   category: "documentid",
 });
 
 // Update a book
-const updatedBook = await api.update("/books", "documentid", {
+const updatedBook = await api.update("documentid", {
   title: "Updated Book Title",
   author: "documentid",
   category: "documentid",
 });
 
 // Delete a book
-await api.deleteOne("/books", "documentid");
+await api.deleteOne("documentid");
 ```
 
 ### 3. Using PopulateOptions for relationships
