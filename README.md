@@ -145,9 +145,11 @@ const bookFilters: FilterOptions = {
 const filteredBooks = await api.get("/books", bookFilters);
 ```
 
-## Advanced Examples
+## For more
 
-For more advanced usage and examples, check out the [ibgroup.dev](https://ibgroup.dev?utm_source=social&utm_medium=githsocub&utm_campaign=strapi-http-toolkit).
+For technical support and more get in touch with me [ibgroup.dev](https://ibgroup.dev?utm_source=social&utm_medium=githsocub&utm_campaign=strapi-http-toolkit).
+
+My linkedin [Linkedin](https://www.linkedin.com/in/ibrahimbayer/).
 
 ## License
 
