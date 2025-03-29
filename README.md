@@ -23,6 +23,11 @@ This toolkit provides a TypeScript-first approach to interacting with Strapi 5's
 - Simplified HTTP operations with proper error handling
 - Generic servicing object will reduce code complexity and boiler plate code size.
 
+## Resulting
+
+Much less complex code, classes to create update fetch data, reducing development time, reducing compatibility issues in time as your product evolves and there are discrepancy between BE and FE
+or mobile application.
+
 ## Installation
 
 ```bash
@@ -70,8 +75,24 @@ import { GenericService } from "@ibrahimbayer/strapi-http-toolkit";
 // Generate service class
 const api = new GenericService<Book>("/books");
 
-// Get a list of books
+// Get all books
 const books = await api.findMany();
+
+// Get a list of books filtered with populate option
+const populateOptions: PopulateOptions<Book> = {
+  author: true,
+  categories: {
+    populate: {
+      books: true,
+    },
+  },
+};
+
+// Define filter options
+const filterOptions: FilterOptions = {
+  title: { $null: true },
+};
+const books = await api.findMany(populateOptions, filterOptions);
 
 // Get a single book
 const book = await api.findOne("documentid");
@@ -145,6 +166,39 @@ const bookFilters: FilterOptions = {
 
 // Get filtered books
 const filteredBooks = await api.get("/books", bookFilters);
+```
+
+### You don't need to create model for create update thanks to CrudRequestModel
+
+### 5. Using `CrudRequestModel` for simplified create/update operations
+
+The `CrudRequestModel` allows you to create or update entities without defining the full model structure. This is particularly useful for operations where only a subset of fields is required. Keep in mind to use
+documentid(s) of references
+
+```typescript
+import {
+  GenericService,
+  CrudRequestModel,
+} from "@ibrahimbayer/strapi-http-toolkit";
+
+// Define a minimal data model for creating/updating a book
+const bookData: CrudRequestModel<Book> = {
+  data: {
+    title: "Minimal Book Title",
+    author: "author-documentid",
+    categories: ["category-documentid1", "category-documentid2"],
+  },
+};
+
+// Create a new book
+const createdBook = await api.create(bookData);
+
+// Update an existing book
+const updatedBook = await api.update("book-documentid", {
+  data: {
+    title: "Updated Minimal Book Title",
+  },
+});
 ```
 
 ## For more
