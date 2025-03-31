@@ -6,7 +6,11 @@ import { fetchJsonWrapper } from "./FetchJsonWrapper";
 import { FetchRequestParameters } from "./FetchRequestParameters";
 import { FilterOptions } from "./FilterOptions";
 import { FindOneResponseModel } from "./FindOneResponseModel";
-import { GenericService } from "./GenericService";
+import {
+  GenericService,
+  InterceptorFunction,
+  RequestOptions,
+} from "./GenericService";
 import { ListResponseModel } from "./ListResponseModel";
 import { MetaModel } from "./MetaModel";
 import { PaginationModel } from "./PaginationModel";
@@ -26,4 +30,6 @@ export {
   MetaModel,
   PaginationModel,
   PopulateOptions,
+  InterceptorFunction,
+  RequestOptions,
 };

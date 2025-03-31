@@ -201,6 +201,48 @@ const updatedBook = await api.update("book-documentid", {
 });
 ```
 
+### 6. Using Interceptors to Update Headers
+
+You can use interceptors to modify headers for all requests. This is useful for adding authentication tokens or other custom headers dynamically. You can use interceptors like axios however each service must be intercepted
+
+```typescript
+import { GenericService } from "@ibrahimbayer/strapi-http-toolkit";
+
+// Create a service instance
+const api = new GenericService<Book>("/books");
+
+// Add an interceptor to update headers, key is to return updated config object back
+api.addInterceptor((config) => {
+  config.headers = {
+    ...config.headers,
+    Authorization: `Bearer YOUR_ACCESS_TOKEN`,
+  };
+  return config;
+});
+
+// Make a request with updated headers
+const books = await api.findMany();
+```
+
+```typescript
+// Add an interceptor to modify the request body
+api.addInterceptor((config) => {
+  if (config.method === "post" || config.method === "put") {
+    config.data = {
+      ...config.data,
+      updatedAt: new Date().toISOString(), // Add a timestamp to the request body
+    };
+  }
+  return config;
+});
+
+// Make a request with updated body
+const newBook = await api.create({
+  title: "Book with Timestamp",
+  author: "author-documentid",
+});
+```
+
 ## For more
 
 For technical support and more get in touch with me [ibgroup.dev](https://ibgroup.dev?utm_source=social&utm_medium=githsocub&utm_campaign=strapi-http-toolkit).

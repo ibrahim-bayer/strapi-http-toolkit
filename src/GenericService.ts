@@ -7,13 +7,35 @@ import { FindOneResponseModel } from "./FindOneResponseModel";
 import { ListResponseModel } from "./ListResponseModel";
 import { PopulateOptions } from "./PopulateOptions";
 
+export interface RequestOptions {
+  headers?: Record<string, string>;
+  params?: {
+    [key: string]: string[] | string;
+  };
+  body?: any;
+  method?: string;
+}
+
+export type InterceptorFunction = (
+  options: RequestOptions
+) => Promise<RequestOptions>;
+
 export class GenericService<T extends BaseStrapiModel> {
   private baseUrl: string;
   private jwt?: string;
+  private interceptors: InterceptorFunction[] = [];
 
   constructor(baseUrl: string, jwt?: string) {
     this.baseUrl = baseUrl;
     this.jwt = jwt;
+  }
+
+  addInterceptor(interceptor: InterceptorFunction) {
+    if (this.interceptors.some((i) => i === interceptor)) {
+      console.warn("Interceptor already exists");
+      return;
+    }
+    this.interceptors.push(interceptor);
   }
 
   async findMany(relations?: PopulateOptions<T>, filters?: FilterOptions<T>) {
@@ -26,7 +48,8 @@ export class GenericService<T extends BaseStrapiModel> {
     return await fetchJsonWrapper<ListResponseModel<T>, T>(
       this.baseUrl,
       parameters,
-      this.jwt
+      this.jwt,
+      this.interceptors
     );
   }
 
@@ -40,7 +63,8 @@ export class GenericService<T extends BaseStrapiModel> {
     return await fetchJsonWrapper<FindOneResponseModel<T>, T>(
       resourceUrl,
       parameters,
-      this.jwt
+      this.jwt,
+      this.interceptors
     );
   }
 
@@ -52,7 +76,8 @@ export class GenericService<T extends BaseStrapiModel> {
     return await fetchJsonWrapper<FindOneResponseModel<T>, T>(
       resourceUrl,
       parameters,
-      this.jwt
+      this.jwt,
+      this.interceptors
     );
   }
 
@@ -65,7 +90,8 @@ export class GenericService<T extends BaseStrapiModel> {
     return await fetchJsonWrapper<FindOneResponseModel<T>, T>(
       resourceUrl,
       parameters,
-      this.jwt
+      this.jwt,
+      this.interceptors
     );
   }
 
@@ -77,7 +103,8 @@ export class GenericService<T extends BaseStrapiModel> {
     return await fetchJsonWrapper<FindOneResponseModel<T>, T>(
       this.baseUrl,
       parameters,
-      this.jwt
+      this.jwt,
+      this.interceptors
     );
   }
 }
