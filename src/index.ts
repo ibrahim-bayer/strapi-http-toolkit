@@ -15,6 +15,7 @@ import { ListResponseModel } from "./ListResponseModel";
 import { MetaModel } from "./MetaModel";
 import { PaginationModel } from "./PaginationModel";
 import { PopulateOptions } from "./PopulateOptions";
+import { BaseLocalizedStrapiModel } from "./BaseLocalizedStrapiModel";
 
 export {
   GenericService,
@@ -32,4 +33,5 @@ export {
   PopulateOptions,
   InterceptorFunction,
   RequestOptions,
+  BaseLocalizedStrapiModel,
 };
