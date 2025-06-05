@@ -1,6 +1,6 @@
 {
   "name": "@ibrahimbayer/strapi-http-toolkit",
-  "version": "1.0.0-beta.7",
+  "version": "1.0.0-beta.8",
   "description": "Strapi 5 compatible module to ease http operations like relationship building, populating relations",
   "main": "dist/index.js",
   "module": "dist/index.js",
