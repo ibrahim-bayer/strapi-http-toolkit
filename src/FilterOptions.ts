@@ -1,8 +1,8 @@
 export type FilterCondition<T> = {
   $eq?: T;
   $ne?: T;
-  $in?: T extends string ? string[] : T[];
-  $nin?: T extends string ? string[] : T[];
+  $in?: string[] | T[];
+  $nin?: string[] | T[];
   $null?: boolean;
   $lt?: T;
   $lte?: T;
