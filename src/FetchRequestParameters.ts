@@ -19,4 +19,5 @@ export interface FetchRequestParameters<X> {
   sort?: string[];
   body?: CrudRequestModel<X>;
   customBody?: object;
+  formData?: FormData;
 }

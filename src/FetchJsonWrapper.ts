@@ -10,8 +10,10 @@ export async function fetchJsonWrapper<T, X>(
 ): Promise<T> {
   let defaultHeaders: any = {
     ...init?.headers,
-    "Content-Type": "application/json",
   };
+  if (!init?.formData) {
+    defaultHeaders["Content-Type"] = "application/json";
+  }
   if (jwt && jwt !== "0" && jwt !== "undefined") {
     defaultHeaders["Authorization"] = `Bearer ${jwt}`;
   }
@@ -39,7 +41,11 @@ export async function fetchJsonWrapper<T, X>(
   const response = await fetch(url + "?" + urlComponent, {
     method: init?.method,
     headers: options.headers,
-    body: options?.body ? JSON.stringify(options.body) : undefined,
+    body: init?.formData
+      ? init.formData
+      : options?.body
+      ? JSON.stringify(options.body)
+      : undefined,
     cache: init?.cache,
   });
   return await response.json();

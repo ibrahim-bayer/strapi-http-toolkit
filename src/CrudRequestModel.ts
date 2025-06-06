@@ -7,8 +7,8 @@ export interface CrudRequestModel<T> {
       :
           | string
           | string[]
-          | { connect: { id: number }[] }
-          | { disconnect: { id: number }[] }
-          | { set: { id: number }[] };
+          | { connect: string[] }
+          | { disconnect: string[] }
+          | { set: string[] };
   };
 }

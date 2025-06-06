@@ -14,11 +14,17 @@ export type FilterCondition<T> = {
   $endsWith?: T extends string ? string : never;
 };
 
+type FilterConditionWithId<T> = T extends { documentId: infer ID }
+  ? FilterCondition<T> | FilterCondition<ID>
+  : FilterCondition<T>;
+
 type FilterConditionOptions<T> = {
   [K in keyof T]?: NonNullable<T[K]> extends (infer U)[]
     ? FilterCondition<U> | FilterOptions<NonNullable<U>>
     : NonNullable<T[K]> extends object
-    ? FilterCondition<NonNullable<T[K]>> | FilterOptions<NonNullable<T[K]>>
+    ?
+        | FilterConditionWithId<NonNullable<T[K]>>
+        | FilterOptions<NonNullable<T[K]>>
     : FilterCondition<NonNullable<T[K]>>;
 };
 
