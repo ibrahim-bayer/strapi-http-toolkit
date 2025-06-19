@@ -1,9 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { GenericService } from "../GenericService";
-import { vi } from "vitest";
-import { FindOneResponseModel } from "../FindOneResponseModel";
+import { describe, expect, it, vi } from "vitest";
 import { BaseStrapiModel } from "../BaseStrapiModel";
 import { CrudRequestModel } from "../CrudRequestModel";
+import { FindOneResponseModel } from "../FindOneResponseModel";
+import { GenericService } from "../GenericService";
 declare const global: any;
 
 interface Book extends BaseStrapiModel {
