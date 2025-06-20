@@ -1,14 +1,15 @@
 {
   "name": "@ibrahimbayer/strapi-http-toolkit",
-  "version": "1.0.0-beta.16",
+  "version": "1.0.0-beta.20",
   "description": "Strapi 5 compatible module to ease http operations like relationship building, populating relations",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "test": "vitest run",
+    "build": "yarn test && tsc",
     "prepare": "npm run build",
-    "deploy": "yarn publish --access public"
+    "deploy": "yarn test && yarn publish --access public"
   },
   "repository": {
     "type": "git",
