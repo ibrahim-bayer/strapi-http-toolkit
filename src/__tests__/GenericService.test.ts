@@ -213,6 +213,8 @@ describe("GenericService", () => {
     );
   });
   it("should update the request params using an interceptor", async () => {
+
+    //arrange
     const service = new GenericService("/test");
     const interceptor = vi.fn(async (options) => {
       options.params = {
@@ -243,20 +245,22 @@ describe("GenericService", () => {
         status: 200,
       })
     );
-
+    //act
     global.fetch = mockFetch as any; // Assign the mock to global.fetch
     await service.findOne("1234");
-
+    //assert
     expect(interceptor).toHaveBeenCalled();
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.stringContaining("additionalParam=extraValue"),
       expect.objectContaining({
-        params: expect.objectContaining({
-          additionalParam: "extraValue",
+        method: "GET",
+        headers: expect.objectContaining({
+          "Content-Type": "application/json",
         }),
       })
     );
   });
+  
   it("should add multiple interceptors and validate all are working properly", async () => {
     const service = new GenericService("/test");
 

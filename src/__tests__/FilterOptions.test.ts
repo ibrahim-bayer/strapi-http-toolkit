@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { FilterCondition, FilterOptions } from "../FilterOptions";
+import qs from "qs";
 
 interface Product {
   id: number;
@@ -61,6 +62,9 @@ describe("FilterOptions", () => {
         $between: [startDate, endDate],
       };
       expect(filter).toBeDefined();
+      expect(filter.$between).toEqual([startDate, endDate]);
+      expect(filter.$gt).toEqual(startDate);
+      expect(filter.$lt).toEqual(endDate);
     });
   });
 
@@ -73,6 +77,10 @@ describe("FilterOptions", () => {
         },
       };
       expect(filter).toBeDefined();
+      expect(filter.name?.$contains).toBe("laptop");
+      expect(filter.name?.$startsWith).toBe("Mac");
+      expect(filter.name?.$eq).toBeUndefined();
+      expect(filter.name?.$endsWith).toBeUndefined();
     });
 
     it("should filter products by status", () => {
@@ -83,6 +91,8 @@ describe("FilterOptions", () => {
         },
       };
       expect(filter).toBeDefined();
+      expect(filter.product_status?.$eq).toBe("active");
+      expect(filter.product_status?.$in).toEqual(["active", "inactive"]);
     });
 
     it("should filter products by price range", () => {
@@ -93,6 +103,8 @@ describe("FilterOptions", () => {
         },
       };
       expect(filter).toBeDefined();
+      expect(filter.price?.$between).toEqual([100, 1000]);
+      expect(filter.price?.$gte).toBe(50);
     });
 
     it("should filter products by tags array", () => {
@@ -115,16 +127,23 @@ describe("FilterOptions", () => {
           },
         },
       };
+      console.log("Filter:", qs.stringify(filter));
       expect(filter).toBeDefined();
+      expect(qs.stringify(filter)).toContain(encodeURIComponent("category[name]"));
+      expect(qs.stringify(filter)).toContain(encodeURIComponent("category[isActive]"));
     });
 
     it("should filter products by category documentId", () => {
       const filter: FilterOptions<Product> = {
         category: {
-          $eq: "cat-123-doc-id",
+          documentId: {
+            $eq: "cat-123-doc-id",
+          }
         },
       };
       expect(filter).toBeDefined();
+      expect(qs.stringify(filter)).toContain(encodeURIComponent("category"));
+      expect(qs.stringify(filter)).toContain(encodeURIComponent("category[documentId]"));
     });
 
     it("should use complex AND/OR filters for products", () => {
