@@ -184,6 +184,21 @@ export const filterProductsByDocumentId = (documentId: string): FilterOptions<Pr
 };
 
 /**
+ * Example 10.1: Filter products by external ID
+ */
+export const filterProductsByExternalId = (externalId: string): FilterOptions<ProductModel> => {
+  const filter: FilterOptions<ProductModel> = {
+    externalId: { $eq: externalId }
+  };
+  
+  console.log('Filter for external ID:');
+  console.log(JSON.stringify(filter, null, 2));
+  console.log('Serialized query string:', qs.stringify({ filters: filter }));
+  
+  return filter;
+};
+
+/**
  * Example 11: Filter categories by product count (using NOT NULL)
  */
 export const filterCategoriesWithProducts = (): FilterOptions<CategoryModel> => {
@@ -277,6 +292,10 @@ export const runFilterExamples = () => {
   
   console.log('10. Filter products by document ID:');
   filterProductsByDocumentId('prod_smartphone_001');
+  console.log('\n');
+  
+  console.log('10.1. Filter products by external ID:');
+  filterProductsByExternalId('trendyol_12345');
   console.log('\n');
   
   console.log('11. Filter categories with products:');
