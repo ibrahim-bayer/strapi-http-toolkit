@@ -83,3 +83,29 @@ export const populateProductWithDeepRelations = (): PopulateOptions<ProductModel
   console.log(JSON.stringify(populate, null, 2));
   return populate;
 };
+
+/**
+ * Example: The Full Relational Loop.
+ * Starts with a product, populates its categories, then populates the products
+ * within those categories, and finally their variants.
+ * This is useful for finding related products in the same categories.
+ */
+export const populateRelatedProductsInSameCategory = (): PopulateOptions<ProductModel> => {
+  const populate: PopulateOptions<ProductModel> = {
+    populate: {
+      categories: {         // 1. Get the categories of the product
+        populate: {
+          products: {       // 2. Then, get all products in those categories
+            populate: {
+              variants: true // 3. For each related product, get its variants
+            }
+          }
+        }
+      }
+    }
+  };
+
+  console.log("Populating related products through categories:");
+  console.log(JSON.stringify(populate, null, 2));
+  return populate;
+};
