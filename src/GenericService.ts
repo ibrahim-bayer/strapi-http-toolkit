@@ -2,10 +2,13 @@ import { BaseStrapiModel } from "./BaseStrapiModel";
 import { CrudRequestModel } from "./CrudRequestModel";
 import { fetchJsonWrapper } from "./FetchJsonWrapper";
 import { FetchRequestParameters } from "./FetchRequestParameters";
+import { FieldSelection } from "./FieldSelection";
 import { FilterOptions } from "./FilterOptions";
 import { FindOneResponseModel } from "./FindOneResponseModel";
 import { ListResponseModel } from "./ListResponseModel";
+import { Pagination } from "./Pagination";
 import { PopulateOptions } from "./PopulateOptions";
+import { SearchParameters } from "./SearchParameters";
 
 export interface RequestOptions {
   headers?: Record<string, string>;
@@ -24,10 +27,23 @@ export class GenericService<T extends BaseStrapiModel> {
   private baseUrl: string;
   private jwt?: string;
   private interceptors: InterceptorFunction[] = [];
+  private parameters?: SearchParameters;
+  private pagination?: Pagination;
+  private sort?: string[];
 
   constructor(baseUrl: string, jwt?: string) {
     this.baseUrl = baseUrl;
     this.jwt = jwt;
+  }
+
+  setParameters(parameters: SearchParameters) {
+    this.parameters = parameters;
+  }
+  setPagination(pagination: Pagination) {
+    this.pagination = pagination;
+  }
+  setSort(sort: string[]) {
+    this.sort = sort;
   }
 
   addInterceptor(interceptor: InterceptorFunction) {
@@ -38,12 +54,24 @@ export class GenericService<T extends BaseStrapiModel> {
     this.interceptors.push(interceptor);
   }
 
-  async findMany(relations?: PopulateOptions<T>, filters?: FilterOptions<T>) {
+  async findMany(
+    relations?: PopulateOptions<T>,
+    filters?: FilterOptions<T>,
+    options?: {
+      fields?: FieldSelection<T>;
+      pagination?: Pagination;
+      sort?: string[];
+    }
+  ) {
     const parameters: FetchRequestParameters<T> = {
       method: "GET",
       cache: "no-store",
       relations,
       filters,
+      fields: options?.fields,
+      parameters: this.parameters,
+      pagination: options?.pagination || this.pagination,
+      sort: options?.sort || this.sort,
     };
     return await fetchJsonWrapper<ListResponseModel<T>, T>(
       this.baseUrl,
@@ -53,12 +81,19 @@ export class GenericService<T extends BaseStrapiModel> {
     );
   }
 
-  async findOne(documentId: string, relations?: PopulateOptions<T>) {
+  async findOne(
+    documentId: string,
+    relations?: PopulateOptions<T>,
+    options?: {
+      fields?: FieldSelection<T>;
+    }
+  ) {
     const resourceUrl = `${this.baseUrl}/${documentId}`;
     const parameters: FetchRequestParameters<T> = {
       method: "GET",
       cache: "no-store",
       relations,
+      fields: options?.fields,
     };
     return await fetchJsonWrapper<FindOneResponseModel<T>, T>(
       resourceUrl,

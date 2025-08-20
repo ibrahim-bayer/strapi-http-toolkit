@@ -168,9 +168,60 @@ const bookFilters: FilterOptions = {
 const filteredBooks = await api.get("/books", bookFilters);
 ```
 
+### 5. Using FieldSelection for optimized queries
+
+Field selection allows you to specify which primitive fields should be returned in the response, reducing payload size and improving performance. Only primitive fields (string, number, boolean, Date, etc.) can be selected - relations must use `populate`.
+
+```typescript
+import {
+  GenericService,
+  FieldSelection,
+  PrimitiveFieldNames,
+} from "strapi-http-toolkit";
+
+const api = new GenericService<Book>("https://your-strapi-api.com");
+
+// Select specific fields only
+const bookFields: FieldSelection<Book> = ["title", "publishedDate", "isbn"]; // Only primitive fields allowed
+
+// Get books with only selected fields
+const books = await api.findMany(undefined, undefined, {
+  fields: ["title", "isbn"],
+});
+
+// Single field selection
+const bookTitles = await api.findMany(undefined, undefined, {
+  fields: "title",
+});
+
+// Combine field selection with other parameters
+const optimizedQuery = await api.findMany(
+  {
+    populate: {
+      author: true, // Note: Field selection within populate works differently
+    },
+  },
+  {
+    title: { $contains: "Adventure" },
+  },
+  {
+    fields: ["title", "publishedDate"],
+    pagination: { page: 1, pageSize: 10 },
+  }
+);
+
+// Type-safe field selection using helper type
+const validFields: PrimitiveFieldNames<Book>[] = [
+  "title",
+  "isbn",
+  "publishedDate",
+  // "author" // This would cause TypeScript error - relations not allowed
+];
+```
+
 ### You don't need to create model for create update thanks to CrudRequestModel
 
-### 5. Using `CrudRequestModel` for simplified create/update operations
+### 6. Using `CrudRequestModel` for simplified create/update operations
 
 The `CrudRequestModel` allows you to create or update entities without defining the full model structure. This is particularly useful for operations where only a subset of fields is required. Keep in mind to use
 documentid(s) of references
@@ -201,7 +252,7 @@ const updatedBook = await api.update("book-documentid", {
 });
 ```
 
-### 6. Using Interceptors to Update Headers
+### 7. Using Interceptors to Update Headers
 
 You can use interceptors to modify headers for all requests. This is useful for adding authentication tokens or other custom headers dynamically. You can use interceptors like axios however each service must be intercepted
 

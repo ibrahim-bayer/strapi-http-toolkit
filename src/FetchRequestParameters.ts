@@ -1,5 +1,7 @@
 import { CrudRequestModel } from "./CrudRequestModel";
+import { FieldSelection } from "./FieldSelection";
 import { FilterOptions } from "./FilterOptions";
+import { Pagination } from "./Pagination";
 import { PopulateOptions } from "./PopulateOptions";
 import { SearchParameters } from "./SearchParameters";
 
@@ -9,14 +11,10 @@ export interface FetchRequestParameters<X> {
   cache?: RequestCache;
   parameters?: SearchParameters;
   filters?: FilterOptions<X>;
-  pagination?: {
-    start?: number;
-    limit?: number;
-    page?: number;
-    pageSize?: number;
-  };
+  pagination?: Pagination;
   relations?: PopulateOptions<X>;
   sort?: string[];
+  fields?: FieldSelection<X>;
   body?: CrudRequestModel<X>;
   customBody?: object;
   formData?: FormData;

@@ -34,6 +34,7 @@ export async function fetchJsonWrapper<T, X>(
     populate: init?.relations?.populate,
     sort: init?.sort,
     filters: init?.filters,
+    fields: init?.fields,
   };
   const urlComponent = parameter
     ? decodeURIComponent(qs.stringify(parameter))
