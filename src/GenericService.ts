@@ -27,23 +27,10 @@ export class GenericService<T extends BaseStrapiModel> {
   private baseUrl: string;
   private jwt?: string;
   private interceptors: InterceptorFunction[] = [];
-  private parameters?: SearchParameters;
-  private pagination?: Pagination;
-  private sort?: string[];
 
   constructor(baseUrl: string, jwt?: string) {
     this.baseUrl = baseUrl;
     this.jwt = jwt;
-  }
-
-  setParameters(parameters: SearchParameters) {
-    this.parameters = parameters;
-  }
-  setPagination(pagination: Pagination) {
-    this.pagination = pagination;
-  }
-  setSort(sort: string[]) {
-    this.sort = sort;
   }
 
   addInterceptor(interceptor: InterceptorFunction) {
@@ -59,6 +46,7 @@ export class GenericService<T extends BaseStrapiModel> {
     filters?: FilterOptions<T>,
     options?: {
       fields?: FieldSelection<T>;
+      parameters?: SearchParameters;
       pagination?: Pagination;
       sort?: string[];
     }
@@ -69,9 +57,9 @@ export class GenericService<T extends BaseStrapiModel> {
       relations,
       filters,
       fields: options?.fields,
-      parameters: this.parameters,
-      pagination: options?.pagination || this.pagination,
-      sort: options?.sort || this.sort,
+      parameters: options?.parameters,
+      pagination: options?.pagination,
+      sort: options?.sort,
     };
     return await fetchJsonWrapper<ListResponseModel<T>, T>(
       this.baseUrl,
@@ -86,6 +74,9 @@ export class GenericService<T extends BaseStrapiModel> {
     relations?: PopulateOptions<T>,
     options?: {
       fields?: FieldSelection<T>;
+      parameters?: SearchParameters;
+      pagination?: Pagination;
+      sort?: string[];
     }
   ) {
     const resourceUrl = `${this.baseUrl}/${documentId}`;
@@ -94,6 +85,9 @@ export class GenericService<T extends BaseStrapiModel> {
       cache: "no-store",
       relations,
       fields: options?.fields,
+      pagination: options?.pagination,
+      parameters: options?.parameters,
+      sort: options?.sort,
     };
     return await fetchJsonWrapper<FindOneResponseModel<T>, T>(
       resourceUrl,
